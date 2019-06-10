@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        
+
+        let url="http://img.mp.itc.cn/upload/20170220/3bde98f642f546be95b2d242994897aa_th.jpg"
+
+        function MyPromise(ck){
+            this.state='pending';
+            this.msg='';
+            ck((data)=>{
+                this.state='resolve';
+                this.msg=data;
+            },()=>{
+                this.state='reject'
+            })
+        }
+        MyPromise.prototype.then=function(ck,err){
+           this.timer=setInterval(()=>{
+                if(this.state==='resolve'){
+                    ck(this.msg)
+                }else{
+                    err(new Error())
+                }
+                clearInterval(this.timer)
+           },1500)
+        }
+        function loadImg(url){
+           return new MyPromise(function(resolve,reject){
+                setInterval(function(){
+                    let img=new Image();
+                    img.src=url;
+                    img.onload=function(){
+                        resolve(img)
+                    }
+                    img.onerror=function(e){
+                        reject(e)
+                    }
+                },500)
+            })
+        }
+        loadImg(url).then((res)=>{
+            document.body.appendChild(res);
+        },(err)=>{
+            console.log(err)
+        })
+    </script>
+</body>
+</html>
